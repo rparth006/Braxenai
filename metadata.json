@@ -1,0 +1,7 @@
+{
+  "name": "Video Call Guardian",
+  "description": "Real-time Deepfake & Liveness detection using rPPG and Micro-expression analysis.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
