@@ -1,5 +1,5 @@
 {
-  "name": "Braxenai",
+  "name": "BraxenAI",
   "description": "Real-time deepfake detection and biometric verification for video calls using rPPG and AI analysis.",
   "requestFramePermissions": ["camera", "microphone"]
 }
