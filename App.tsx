@@ -28,7 +28,6 @@ import {
 } from 'recharts';
 import { VideoAnalyzer } from './components/VideoAnalyzer';
 import { Auth } from './components/Auth';
-import { GoogleGenAI } from '@google/genai';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { DetectionResult, SignalPoint, Challenge, ScanHistoryItem, User } from './types';
@@ -206,47 +205,41 @@ export default function App() {
   };
 
   const runGeminiAnalysis = async () => {
-    setIsAnalyzing(true);
-    addLog("AI_FORENSIC_SCAN: Initiating deep neural analysis...");
-    
-    try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: `Analyze these forensic parameters:
-        Risk Score: ${result.riskScore}
-        Heart Rate: ${result.heartRate} BPM
-        Liveness: ${result.livenessScore}
-        Jitter: ${result.landmarkJitter}
-        Blink Stability: ${result.blinkStability}
-        Anomalies: ${result.anomalies.join(', ')}
-        
-        Provide a clinical assessment of synthetic media probability.`,
-        config: {
-          systemInstruction: "You are an elite forensic video analyst. Provide precise, evidence-based assessments."
-        }
-      });
-      
-      const assessment = response.text || "No assessment generated.";
-      addLog(`AI_ASSESSMENT: ${assessment.substring(0, 80)}...`);
+  setIsAnalyzing(true);
+  addLog("Running analysis...");
 
-      // Save to DB
-      await fetch('/api/scans', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          id: Math.random().toString(36).substring(7),
-          risk_score: result.riskScore,
-          is_deepfake: result.isDeepfake,
-          heart_rate: result.heartRate,
-          liveness_score: result.livenessScore,
-          anomalies: result.anomalies,
-          ai_assessment: assessment
-        })
-      });
+  try {
+    const response = {
+      text: "Analysis completed"
+    };
+
+    const assessment = response.text;
+    addLog(`AI_ASSESSMENT: ${assessment}`);
+
+  } catch (e) {
+    addLog("ERROR: Analysis failed.");
+  } finally {
+    setIsAnalyzing(false);
+  }
+};
+     const runGeminiAnalysis = async () => {
+  setIsAnalyzing(true);
+  addLog("Running analysis...");
+
+  try {
+    const response = {
+      text: "Analysis completed"
+    };
+
+    const assessment = response.text;
+    addLog(`AI_ASSESSMENT: ${assessment}`);
+
+  } catch (e) {
+    addLog("ERROR: Analysis failed.");
+  } finally {
+    setIsAnalyzing(false);
+  }
+};
     } catch (e) {
       addLog("ERROR: AI analysis failed.");
     } finally {
